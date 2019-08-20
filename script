@@ -1,0 +1,92 @@
+import requests
+from bs4 import BeautifulSoup
+from time import sleep
+import json
+from tqdm import tqdm
+
+pages = [
+    'http://datdota.com/players/single-performance?players=86745912&patch=7.22&patch=7.21&patch=7.20&after=01%2F01%2F2011&before=20%2F08%2F2019&duration=0%3B200&duration-value-from=0&duration-value-to=200&tier=1&tier=2&valve-event=does-not-matter'
+]
+
+cs_win_total = 0
+cs_loss_total = 0
+loss_total = 0
+win_total = 0
+
+cs_avg_win = cs_win_total / win_total
+cs_avg_loss = cs_loss_total / loss_total
+
+def add_to_total(match, result, cs):
+    print('Gathering data from match: ' + str(match))
+    if result == win:
+        cs_win_total += cs
+        win_total += 1
+    else:
+        cs_loss_total += cs
+        loss_total += 1
+
+
+def scrape_datdota_tables(data):
+    print('Scraping tables...')
+
+    for page in pages:
+        r = requests.get(page)
+        soup = BeautifulSoup(r.content, 'html.parser')
+
+        rows = soup.select('tbody tr')
+
+        for row in rows:
+            d = dict()
+
+            d['name'] = row.select_one('.source-title').text.strip()
+            d['allsides_page'] = 'https://www.allsides.com' + row.select_one('.source-title a')['href']
+            d['bias'] = row.select_one('.views-field-field-bias-image a')['href'].split('/')[-1]
+            d['agree'] = int(row.select_one('.agree').text)
+            d['disagree'] = int(row.select_one('.disagree').text)
+            d['agree_ratio'] = d['agree'] / d['disagree']
+            d['agreeance_text'] = get_agreeance_text(d['agree_ratio'])
+
+            data.append(d)
+
+        sleep(10)
+    return data
+
+
+def scrape_allsides_sources(data):
+    print('Scraping news source pages...')
+
+    for d in tqdm(data):
+        r = requests.get(d['allsides_page'])
+        soup = BeautifulSoup(r.content, 'html.parser')
+
+        try:
+            website = soup.select_one('.www')['href']
+            d['website'] = website
+        except TypeError:
+            pass
+
+        sleep(10)
+    return data
+
+
+def save_json(data):
+    with open('allsides.json', 'w') as f:
+        json.dump(data, f)
+
+
+def open_json():
+    with open('allsides.json', 'r') as f:
+        return json.load(f)
+
+
+def main():
+    data = []
+    data = scrape_allsides_tables(data)
+    data = scrape_allsides_sources(data)
+    save_json(data)
+
+    print('Done.')
+
+
+if __name__ == '__main__':
+    main()
