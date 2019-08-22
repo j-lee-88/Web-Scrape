@@ -33,15 +33,15 @@ def main():
 
             print_total("Dota 2")
 
-        if user_input == "Print CSGO":
+        elif user_input == "Print CSGO":
 
             print_total("CSGO")
             
-        if user_input == "Print Hearthstone":
+        elif user_input == "Print Hearthstone":
 
             print_total("Hearthstone")
             
-        if user_input == "Print LoL":
+        elif user_input == "Print LoL":
 
             print_total("LoL")
 
@@ -60,23 +60,34 @@ def print_total(game):
     print("Please enter a year: ")
     
     year = int(input())
-    
+
+    hsh = month_dict[month]*100 + (year - 2000)
+
+
+
     summ = 0
+    
     if game == "Dota 2":
-        for tourn in price_dict_Dota2[month_dict[month]*100 + (year - 2000)]:
-            summ += int(tourn[2])
-    if game == "CSGO":
-        for tourn in price_dict_CSGO[month_dict[month]*100 + (year - 2000)]:
-            summ += int(tourn[2])
-    if game == "Hearthstone":
-        for tourn in price_dict_Hearthstone[month_dict[month]*100 + (year - 2000)]:
-            summ += int(tourn[2]) 
-    if game == "LoL":
-        for tourn in price_dict_LoL[month_dict[month]*100 + (year - 2000)]:
-            summ += int(tourn[2]) 
+        if hsh in price_dict_Dota2:
+            for tourn in price_dict_Dota2[hsh]:
+                summ += int(tourn[2])
+    elif game == "CSGO":
+        if hsh in price_dict_CSGO:
+            for tourn in price_dict_CSGO[hsh]:
+                summ += int(tourn[2])
+    elif game == "Hearthstone":
+        if hsh in price_dict_Hearthstone:
+            for tourn in price_dict_Hearthstone[hsh]:
+                summ += int(tourn[2]) 
+    elif game == "LoL":
+        if hsh in price_dict_Hearthstone:
+            for tourn in price_dict_LoL[hsh]:
+                summ += int(tourn[2]) 
     elif game == "Overwatch":
-        for tourn in price_dict_Overwatch[month_dict[month]*100 + (year - 2000)]:
-            summ += int(tourn[2]) 
+        if hsh in price_dict_Overwatch:
+            for tourn in price_dict_Overwatch[hsh]:
+                summ += int(tourn[2])
+
 
     print("The total prize monet for the month of " + month + ", " + str(year) + " is: $" + str(summ))
     print()
@@ -102,9 +113,11 @@ def get_game(url, game):
         year = int(date.split()[2])
 
         
-        
-        price = tournament.find("span", "badge-money").text.strip().replace(",", "")
+        if tournament.find("span", "badge-money"):
+            price = tournament.find("span", "badge-money").text.strip().replace(",", "")
 
+        else:
+            price = 0
 
         
         hsh = month_dict[month]*100 + (year - 2000)
@@ -115,19 +128,19 @@ def get_game(url, game):
             else:
                 price_dict_Dota2[hsh].append((name, date, price))
                 
-        if game == "CSGO":
+        elif game == "CSGO":
             if hsh not in price_dict_CSGO:
                 price_dict_CSGO[hsh] = [(name, date, price)]
             else:
                 price_dict_CSGO[hsh].append((name, date, price))
                 
-        if game == "Hearthstone":
+        elif game == "Hearthstone":
             if hsh not in price_dict_Hearthstone:
                 price_dict_Hearthstone[hsh] = [(name, date, price)]
             else:
                 price_dict_Hearthstone[hsh].append((name, date, price))
                 
-        if game == "LoL":
+        elif game == "LoL":
             if hsh not in price_dict_LoL:
                 price_dict_LoL[hsh] = [(name, date, price)]
             else:
