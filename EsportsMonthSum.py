@@ -12,11 +12,17 @@ month_dict = {"January": 1, "February" : 2, "March" : 3,
               "November" : 11, "December" : 12}
 price_dict_CSGO = {}
 price_dict_Dota2 = {}
+price_dict_Hearthstone = {}
+price_dict_LoL = {}
+price_dict_Overwatch = {}
 
 def main():
 
     get_game("https://en.game-tournaments.com/dota-2/tournaments", "Dota 2")
     get_game("https://en.game-tournaments.com/csgo/tournaments", "CSGO")
+    get_game("https://en.game-tournaments.com/hearthstone/tournaments", "Hearthstone")
+    get_game("https://en.game-tournaments.com/lol/tournaments", "LoL")
+    get_game("https://en.game-tournaments.com/overwatch/tournaments", "Overwatch")
 
     print("Please enter a command: ")
     user_input = ""
@@ -27,9 +33,21 @@ def main():
 
             print_total("Dota 2")
 
-        elif user_input == "Print CSGO":
+        if user_input == "Print CSGO":
 
             print_total("CSGO")
+            
+        if user_input == "Print Hearthstone":
+
+            print_total("Hearthstone")
+            
+        if user_input == "Print LoL":
+
+            print_total("LoL")
+
+        elif user_input == "Print Overwatch":
+
+             print_total("Overwatch")
 
         print("Please enter a command: ")
 
@@ -47,8 +65,17 @@ def print_total(game):
     if game == "Dota 2":
         for tourn in price_dict_Dota2[month_dict[month]*100 + (year - 2000)]:
             summ += int(tourn[2])
-    elif game == "CSGO":
+    if game == "CSGO":
         for tourn in price_dict_CSGO[month_dict[month]*100 + (year - 2000)]:
+            summ += int(tourn[2])
+    if game == "Hearthstone":
+        for tourn in price_dict_Hearthstone[month_dict[month]*100 + (year - 2000)]:
+            summ += int(tourn[2]) 
+    if game == "LoL":
+        for tourn in price_dict_LoL[month_dict[month]*100 + (year - 2000)]:
+            summ += int(tourn[2]) 
+    elif game == "Overwatch":
+        for tourn in price_dict_Overwatch[month_dict[month]*100 + (year - 2000)]:
             summ += int(tourn[2]) 
 
     print("The total prize monet for the month of " + month + ", " + str(year) + " is: $" + str(summ))
@@ -88,12 +115,26 @@ def get_game(url, game):
                 price_dict_Dota2[hsh] = [(name, date, price)]
             else:
                 price_dict_Dota2[hsh].append((name, date, price))
-        elif game == "CSGO":
+        if game == "CSGO":
             if hsh not in price_dict_CSGO:
                 price_dict_CSGO[hsh] = [(name, date, price)]
             else:
                 price_dict_CSGO[hsh].append((name, date, price))
-
+        if game == "Hearthstone":
+            if hsh not in price_dict_Hearthstone:
+                price_dict_Hearthstone[hsh] = [(name, date, price)]
+            else:
+                price_dict_Hearthstone[hsh].append((name, date, price))
+        if game == "LoL":
+            if hsh not in price_dict_LoL:
+                price_dict_LoL[hsh] = [(name, date, price)]
+            else:
+                price_dict_LoL[hsh].append((name, date, price))
+        elif game == "Overwatch":
+            if hsh not in price_dict_Overwatch:
+                price_dict_Overwatch[hsh] = [(name, date, price)]
+            else:
+                price_dict_Overwatch[hsh].append((name, date, price))
  
 
 main()
