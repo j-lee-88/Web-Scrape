@@ -82,7 +82,6 @@ def print_total(game):
     print()
     
 
-
 def get_game(url, game):
     
 
@@ -115,21 +114,25 @@ def get_game(url, game):
                 price_dict_Dota2[hsh] = [(name, date, price)]
             else:
                 price_dict_Dota2[hsh].append((name, date, price))
+                
         if game == "CSGO":
             if hsh not in price_dict_CSGO:
                 price_dict_CSGO[hsh] = [(name, date, price)]
             else:
                 price_dict_CSGO[hsh].append((name, date, price))
+                
         if game == "Hearthstone":
             if hsh not in price_dict_Hearthstone:
                 price_dict_Hearthstone[hsh] = [(name, date, price)]
             else:
                 price_dict_Hearthstone[hsh].append((name, date, price))
+                
         if game == "LoL":
             if hsh not in price_dict_LoL:
                 price_dict_LoL[hsh] = [(name, date, price)]
             else:
                 price_dict_LoL[hsh].append((name, date, price))
+                
         elif game == "Overwatch":
             if hsh not in price_dict_Overwatch:
                 price_dict_Overwatch[hsh] = [(name, date, price)]
